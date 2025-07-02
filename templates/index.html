@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arbitrage Betting Calculator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>💸 Arbitrage Betting Calculator</h1>
+        <p>Enter 2 or more odds to detect arbitrage opportunities and get a full profit breakdown.</p>
+
+        <form method="POST">
+            <div id="odd-inputs">
+                <div class="input-row">
+                    <div>
+                        <label>Enter Odd 1</label>
+                        <input type="number" step="0.01" min="1.01" name="odds" required>
+                    </div>
+                    <div>
+                        <label>Enter Odd 2</label>
+                        <input type="number" step="0.01" min="1.01" name="odds" required>
+                    </div>
+                    <div>
+                        <label>Enter Odd 3 (optional)</label>
+                        <input type="number" step="0.01" min="1.01" name="odds">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div>
+                        <label>Total Stake (₦)</label>
+                        <input type="number" step="0.01" min="1.0" name="total_stake" required>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button type="submit">Calculate</button>
+                <button type="reset" class="reset">Reset</button>
+                {% if result and result.arbitrage %}
+                <a href="/export" class="export" style="text-align:center;line-height:2.4em;text-decoration:none;">Export PDF</a>
+                {% endif %}
+            </div>
+        </form>
+
+        {% if result %}
+            {% if result.arbitrage %}
+                <div class="result success">
+                    <h2>✅ Arbitrage Opportunity Found!</h2>
+                    <ul>
+                        <li>Sum of Inverses: {{ result.total_inverse }}</li>
+                    </ul>
+                    <h3>Stake Allocation</h3>
+                    <ul>
+                        {% for stake in result.stakes %}
+                            <li>₦{{ stake }} on Odd {{ result.odds[loop.index0] }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h3>Returns</h3>
+                    <ul>
+                        {% for ret in result.returns %}
+                        <li>₦{{ ret }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h3>Profit Summary</h3>
+                    <p>Guaranteed Return: ₦{{ result.guaranteed_return }}<br>
+                       Profit: ₦{{ result.profit }}</p>
+                </div>
+            {% else %}
+                <div class="result error">
+                    <h2>❌ No Arbitrage Opportunity</h2>
+                    <ul>
+                        <li>Sum of Inverses: {{ result.total_inverse }}</li>
+                    </ul>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
+<!-- This is the main HTML template for the Arbitrage Betting Calculator -->
+<!-- It includes a form for inputting odds and total stake, displays results, and links to
