@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for
 from io import BytesIO
 from reportlab.pdfgen import canvas
+import os
 
 app = Flask(__name__)
 
@@ -95,7 +96,10 @@ def export():
     buffer.seek(0)
     return send_file(buffer, as_attachment=True, download_name="arbitrage_report.pdf", mimetype='application/pdf')
 
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
 # This is the main Flask application for the Arbitrage Betting Calculator
 # It handles the main logic for calculating arbitrage opportunities and exporting results as a PDF.
